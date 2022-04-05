@@ -2,30 +2,46 @@ package com.example.accelerometerandlight;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.provider.ContactsContract;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.jjoe64.graphview.DefaultLabelFormatter;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.Viewport;
+import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
+import java.util.Calendar;
+import java.util.Date;
+
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
     private static final String TAG = "MainActivity";
     private SensorManager sensorManager;
     private Sensor linearAccelerometer, accelerometer, mGyro, mLight, mPressure, mStepDetector;
+
 
     double pressureCurrentValue = 0;
     double pressurePreviousValue = 0;
@@ -41,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     TextView light;
     TextView actualPressure;
-    double savedPressure;
+     double savedPressure;
 
 
     private int pointsPlotted = 0;
@@ -57,14 +73,21 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private TextView txt_stepDetector;
 
     LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(new DataPoint[]{
-//            new DataPoint(0, 1),
-//            new DataPoint(1, 5),
+//            new DataPoint(new Date().getTime(), 900),
+//            new DataPoint(new Date().getTime(), 800),
 //            new DataPoint(2, 3),
 //            new DataPoint(3, 2),
 //            new DataPoint(4, 6)
     });
     String dataWithPressure;
     private String temporary;
+SimpleDateFormat sdf = new SimpleDateFormat("mm:ss ");
+private Handler mHandler = new Handler();
+
+DatabaseHandler dbh;
+SQLiteDatabase sqLiteDatabase;
+
+LineGraphSeries<DataPoint> dataseries= new LineGraphSeries<>(new DataPoint[0]);
 
 
     @Override
@@ -196,8 +219,24 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         graph.getGridLabelRenderer().setVerticalAxisTitle(" ");
 
+        graph.getGridLabelRenderer().setNumHorizontalLabels(5);
+//
+//        graph.getGridLabelRenderer().setLabelFormatter(new
+//                DateAsXAxisLabelFormatter(graph.getContext(), sdf));
 
-        graph.addSeries(series);
+
+        graph.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter(){
+    @Override
+    public String formatLabel(double value, boolean isValueX){
+        if (isValueX){
+            return sdf.format(new Date((long)value));
+        }else{
+            return super.formatLabel(value,isValueX);
+
+        }
+    }
+});
+        series.setDataPointsRadius(10);
         viewport.setYAxisBoundsManual(true);
         viewport.setXAxisBoundsManual(true);
         viewport.isScrollable();
@@ -206,8 +245,26 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         viewport.setScalable(true);
         viewport.setScalableY(true);
 
+        graph.addSeries(series);
 
+        dbh = new DatabaseHandler(this);
+sqLiteDatabase = dbh.getWritableDatabase();
+
+        graph.addSeries(dataseries);
+        graph.getGridLabelRenderer().setNumHorizontalLabels(4);
+insertData();
+
+//        Handler handler = new Handler();
+//        handler.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                int a=0;
+//            }
+//        }, 1000);
+
+//        sensorManager.registerListener(this, mPressure, 50, 1000);
     }
+
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
@@ -229,6 +286,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 //            light.setText("Light: " + sensorEvent.values[0]);
 //        }
         else if (sensor.getType() == Sensor.TYPE_PRESSURE) {
+
             savedPressure = sensorEvent.values[0];
             actualPressure.setText("Pressure: " + sensorEvent.values[0]);
 
@@ -263,18 +321,43 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             index++;
             prog_pressureMeter.setProgress((int) changeInPressure);
             pointsPlotted +=  5;
-            series.appendData(new DataPoint(pointsPlotted, pressureCurrentValue), false, pointsPlotted + 1);
+//            series.appendData(new DataPoint(pointsPlotted, pressureCurrentValue), false, pointsPlotted + 1);
+            Date date1 = new Date();
+            String newDate= new Date().toString();
+            String date2=null;
+            try {
+                date1 = new SimpleDateFormat("mm:ss").parse(newDate);
+
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            Calendar calendar = Calendar.getInstance();
+            Date d1 = calendar.getTime();
+            calendar.add(Calendar.SECOND, 5);
+            series.appendData(new DataPoint(d1, pressureCurrentValue), true, 20);
 
             dataWithPressure = pressureStr + changeInPressureStr;
-            viewport.setMaxX(pointsPlotted + 0.005);
-            viewport.setMinX(pointsPlotted - 800);
-            viewport.setMaxY(savedPressure + 0.10);
-            viewport.setMinY(savedPressure - 0.10);
+//            viewport.setMaxX(pointsPlotted + 0.005);
+//            viewport.setMinX(pointsPlotted - 800);
+            Double min = savedPressure,max=0.0;
+            if(savedPressure>max){
+                max= savedPressure;
+            }else if(savedPressure<min){
+                min = savedPressure;
+            }
+            
+            viewport.setMaxY(max + 0.40);
+            viewport.setMinY(min - 0.40);
 
 //            viewport.setMinX(pointsPlotted);
 //            viewport.setMaxY(100);
+//            sensorManager.registerListener (this, mPressure, 1000, 100000);
+
 
         } else if (sensor.getType() == Sensor.TYPE_STEP_DETECTOR) {
+
+
 
             stepDetector = (int) (stepDetector + sensorEvent.values[0]);
 
@@ -286,6 +369,28 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
     }
-
+    protected void onPause() {
+        super.onPause();
+        sensorManager.unregisterListener(this);
+    }
+    protected void onResume() {
+        super.onResume();
+    }
+public void insertData(){
+       long xValue = new Date().getTime();
+       double yValue = savedPressure;
+       dbh.insertDate(xValue, yValue);
+       dataseries.resetData(grabData());
+}
+private DataPoint[] grabData(){
+        String [] column ={ "xValue","yValue"};
+        Cursor cursor = sqLiteDatabase.query("Table1", column, null, null, null , null, null);
+    DataPoint[] dataPoints = new DataPoint[cursor.getCount()];
+    for (int i=0;i<cursor.getCount();i++){
+        cursor.moveToNext();
+        dataPoints[i]= new DataPoint(cursor.getLong(0), cursor.getDouble(1));
+    }
+    return dataPoints;
+}
 
 }
