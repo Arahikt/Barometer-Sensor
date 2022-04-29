@@ -1,7 +1,5 @@
 package com.example.accelerometerandlight;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,10 +14,13 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.Viewport;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
+
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
@@ -43,6 +44,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     TextView actualPressure;
     double savedPressure;
 
+    long startTime=0;
+    long endTime=0;
+    long time=0;
 
     private int pointsPlotted = 0;
     private int graphIntervalCounter = 0;
@@ -118,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         button = findViewById(R.id.button);
         button1 = findViewById(R.id.button1);
-        sp = getSharedPreferences("Mydata", Context.MODE_PRIVATE);
+//        sp = getSharedPreferences("Mydata", Context.MODE_PRIVATE);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -146,15 +150,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 //
 ////                                Intent shareIntent = Intent.createChooser(intent, null);
 //                                startActivity(intent);
+///
 
                 Intent intent = new Intent();
-                intent.setAction(Intent.ACTION_SEND_MULTIPLE);
+                intent.setAction(Intent.ACTION_SEND);
                 String strp1 = temporary;
 
                 intent.putExtra(Intent.EXTRA_TEXT, strp1);
 
 
-                intent.setType("Application/txt");
+                intent.setType("text/plain");
                 Intent shareIntent = Intent.createChooser(intent, null);
                 startActivity(shareIntent);
             }
@@ -205,7 +210,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         viewport.setScrollableY(true);
         viewport.setScalable(true);
         viewport.setScalableY(true);
-
+        startTime = System.currentTimeMillis();
 
     }
 
@@ -253,21 +258,27 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
             txt_pressureChange.setText("Change:  \n" + changeInPressure);
 
-            int index=0;
+
             if (temporary != null) {
 
                 temporary +=String.valueOf(pointsPlotted)+ " , " + String.valueOf(savedPressure) + " , " + String.valueOf(changeInPressure) + "\n";
             } else {
                 temporary = String.valueOf(pointsPlotted)+ " , " + String.valueOf(savedPressure) + " , " + String.valueOf(changeInPressure) + "\n";
             }
-            index++;
             prog_pressureMeter.setProgress((int) changeInPressure);
-            pointsPlotted +=  5;
-            series.appendData(new DataPoint(pointsPlotted, pressureCurrentValue), false, pointsPlotted + 1);
+//             startTime = System.currentTimeMillis();
+
+            if (pointsPlotted== 100 ||pointsPlotted==200){
+                endTime = System.currentTimeMillis();
+                time = endTime - startTime;
+                txt_stepDetector.setText(String.valueOf(time));
+            }
+            pointsPlotted +=  1;
+            series.appendData(new DataPoint(pointsPlotted, pressureCurrentValue), false, pointsPlotted + 400);
 
             dataWithPressure = pressureStr + changeInPressureStr;
             viewport.setMaxX(pointsPlotted + 0.005);
-            viewport.setMinX(pointsPlotted - 800);
+//            viewport.setMinX(pointsPlotted - 400);
             viewport.setMaxY(savedPressure + 0.10);
             viewport.setMinY(savedPressure - 0.10);
 
