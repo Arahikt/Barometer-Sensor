@@ -8,6 +8,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -23,6 +24,7 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
+
 
     private static final String TAG = "MainActivity";
     private SensorManager sensorManager;
@@ -51,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private int pointsPlotted = 0;
     private int graphIntervalCounter = 0;
 
-    Button button, button1;
+    Button button, button1, button2;
     SharedPreferences sp;
     String pressureStr, prevPressureStr, changeInPressureStr;
 
@@ -75,6 +77,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+
+
         xValue = (TextView) findViewById(R.id.xValue);
         yValue = (TextView) findViewById(R.id.yValue);
         zValue = (TextView) findViewById(R.id.zValue);
@@ -91,29 +97,36 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 //        light = (TextView) findViewById(R.id.light);
         actualPressure = (TextView) findViewById(R.id.actualPressure);
 
-        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        button2 = findViewById(R.id.button2);
+        button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
-        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        sensorManager.registerListener(MainActivity.this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+                accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+                sensorManager.registerListener(MainActivity.this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
 
-        linearAccelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
-        sensorManager.registerListener(MainActivity.this, linearAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+                linearAccelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
+                sensorManager.registerListener(MainActivity.this, linearAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
 
-        mGyro = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-        sensorManager.registerListener(MainActivity.this, mGyro, SensorManager.SENSOR_DELAY_NORMAL);
+                mGyro = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+                sensorManager.registerListener(MainActivity.this, mGyro, SensorManager.SENSOR_DELAY_NORMAL);
 
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
 //        mLight = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
 //        sensorManager.registerListener(MainActivity.this, mLight, SensorManager.SENSOR_DELAY_NORMAL);
 
-        mStepDetector = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
-        sensorManager.registerListener(MainActivity.this, mStepDetector, SensorManager.SENSOR_DELAY_NORMAL);
+                mStepDetector = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
+                sensorManager.registerListener(MainActivity.this, mStepDetector, SensorManager.SENSOR_DELAY_NORMAL);
 
-        txt_stepDetector.setText("Steps: " + String.valueOf(stepDetector));
+                txt_stepDetector.setText("Steps: " + String.valueOf(stepDetector));
 
-        mPressure = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
-        sensorManager.registerListener(MainActivity.this, mPressure, SensorManager.SENSOR_DELAY_NORMAL);
+                mPressure = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
+                sensorManager.registerListener(MainActivity.this, mPressure, SensorManager.SENSOR_DELAY_NORMAL);
+            }
+        });
+
 
         txt_currentPressure = findViewById(R.id.txt_currentPressure);
         txt_prevPressure = findViewById(R.id.txt_prevPressure);
@@ -122,6 +135,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         button = findViewById(R.id.button);
         button1 = findViewById(R.id.button1);
+
 //        sp = getSharedPreferences("Mydata", Context.MODE_PRIVATE);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -268,10 +282,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             prog_pressureMeter.setProgress((int) changeInPressure);
 //             startTime = System.currentTimeMillis();
 
-            if (pointsPlotted== 100 ||pointsPlotted==200){
+            if (pointsPlotted % 10 ==0 ){
                 endTime = System.currentTimeMillis();
                 time = endTime - startTime;
-                txt_stepDetector.setText(String.valueOf(time));
+                txt_stepDetector.setText(String.valueOf(time/1000));
             }
             pointsPlotted +=  1;
             series.appendData(new DataPoint(pointsPlotted, pressureCurrentValue), false, pointsPlotted + 400);

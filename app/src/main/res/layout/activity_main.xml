@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="30sp"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    >
 
     <LinearLayout
         android:id="@+id/firstLayout"
@@ -158,7 +159,7 @@
         <ProgressBar
             android:id="@+id/prog_pressureMeter"
             style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="65dp"
+            android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:layout_marginTop="8dp"
             android:max="1" />
@@ -172,17 +173,17 @@
 
         <Button
             android:id="@+id/button1"
-            android:layout_width="80dp"
+            android:layout_width="wrap_content"
             android:layout_height="60dp"
             android:layout_marginLeft="5dp"
             android:text="Show" />
 
         <Button
             android:id="@+id/button2"
-            android:layout_width="wrap_content"
+            android:layout_width="122dp"
             android:layout_height="60dp"
             android:layout_marginLeft="5dp"
-            android:text="Measure" />
+            android:text="Start" />
     </LinearLayout>
 
     <com.jjoe64.graphview.GraphView
