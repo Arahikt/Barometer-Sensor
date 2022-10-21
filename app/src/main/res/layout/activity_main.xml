@@ -6,145 +6,40 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="30sp"
-    tools:context=".MainActivity"
-    >
+    tools:context=".MainActivity">
+
 
     <LinearLayout
         android:id="@+id/firstLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/xValue"
-            android:layout_width="100sp"
-            android:layout_height="40sp"
-            android:layout_weight="1" />
-
-        <TextView
-            android:id="@+id/yValue"
-            android:layout_width="100sp"
-            android:layout_height="40sp"
-            android:layout_weight="1" />
-
-        <TextView
-            android:id="@+id/zValue"
-            android:layout_width="100sp"
-            android:layout_height="40sp"
-            android:layout_weight="1" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/secondLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/firstLayout"
+        android:layout_width="344dp"
+        android:layout_height="200dp"
         android:layout_marginTop="20sp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/xGyroValue"
-            android:layout_width="100sp"
-            android:layout_height="40sp"
-            android:layout_weight="1" />
-
-        <TextView
-            android:id="@+id/yGyroValue"
-            android:layout_width="100sp"
-            android:layout_height="40sp"
-            android:layout_weight="1" />
-
-        <TextView
-            android:id="@+id/zGyroValue"
-            android:layout_width="100sp"
-            android:layout_height="40sp"
-            android:layout_weight="1" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/thirdLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/secondLayout"
-        android:layout_marginTop="20sp"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
 
         <TextView
             android:id="@+id/txt_currentPressure"
-            android:layout_width="117dp"
+            android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:text="@string/current_pressure"/>
 
         <TextView
             android:id="@+id/txt_prevPressure"
-            android:layout_width="114dp"
+            android:layout_width="match_parent"
             android:layout_height="50sp"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:text="@string/previous_pressure" />
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/forthLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/thirdLayout"
-        android:layout_marginTop="20sp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/actualPressure"
-            android:layout_width="100dp"
-            android:layout_height="50sp"
-            android:layout_weight="1" />
 
         <TextView
             android:id="@+id/txt_pressureChange"
-            android:layout_width="118dp"
+            android:layout_width="match_parent"
             android:layout_height="50sp"
-            android:layout_weight="1" />
-
-<!--        <TextView-->
-<!--            android:id="@+id/light"-->
-<!--            android:layout_width="100sp"-->
-<!--            android:layout_height="50sp"-->
-<!--            android:layout_weight="1" />-->
-        <TextView
-            android:id="@+id/txt_stepDetector"
-            android:layout_width="100sp"
-            android:layout_height="50sp"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:text="@string/change" />
 
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/fifthLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/forthLayout"
-        android:layout_marginTop="20sp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/linearXValue"
-            android:layout_width="100sp"
-            android:layout_height="40sp"
-            android:layout_weight="1" />
-
-        <TextView
-            android:id="@+id/linearYValue"
-            android:layout_width="100sp"
-            android:layout_height="40sp"
-            android:layout_weight="1" />
-
-        <TextView
-            android:id="@+id/linearZValue"
-            android:layout_width="100sp"
-            android:layout_height="40sp"
-            android:layout_weight="1" />
     </LinearLayout>
 
 
@@ -152,38 +47,26 @@
         android:id="@+id/sixthLayout"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:layout_below="@+id/fifthLayout"
+        android:layout_below="@+id/firstLayout"
         android:layout_marginTop="20sp"
         android:orientation="horizontal">
 
-        <ProgressBar
-            android:id="@+id/prog_pressureMeter"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_marginTop="8dp"
-            android:max="1" />
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="112dp"
+            android:layout_height="60dp"
+            android:layout_marginStart="5dp"
+            android:layout_weight="1"
+            android:text="@string/start" />
 
         <Button
             android:id="@+id/button"
-            android:layout_width="80dp"
+            android:layout_width="112dp"
             android:layout_height="60dp"
-            android:layout_marginLeft="5dp"
-            android:text="Save" />
-
-        <Button
-            android:id="@+id/button1"
-            android:layout_width="wrap_content"
-            android:layout_height="60dp"
-            android:layout_marginLeft="5dp"
-            android:text="Show" />
-
-        <Button
-            android:id="@+id/button2"
-            android:layout_width="122dp"
-            android:layout_height="60dp"
-            android:layout_marginLeft="5dp"
-            android:text="Start" />
+            android:layout_marginStart="5dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/design_default_color_secondary_variant"
+            android:text="@string/save" />
     </LinearLayout>
 
     <com.jjoe64.graphview.GraphView
@@ -194,5 +77,4 @@
         android:layout_below="@+id/sixthLayout"
         app:layout_constraintTop_toBottomOf="@id/sixthLayout" />
 
-    app:layout_constraintBottom_toBottomOf="parent"
 </RelativeLayout>
