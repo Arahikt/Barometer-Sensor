@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Accelerometer And Light</string>
+    <string name="app_name">Barometer Sensor</string>
     <string name="title_activity_swipe_left">SwipeLeft</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
